@@ -12,7 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          # lockfileVersion 2 requires a recent bun (local canary produces it)
+          bun-version: canary
       - run: bun install --frozen-lockfile
       - run: bun test
       - run: bun run check
