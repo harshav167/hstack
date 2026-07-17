@@ -126,9 +126,12 @@ features/<name>/     # one product feature per folder
 src/shared/          # hook-io, config, capability registry
 src/hooks/           # thin cursor entrypoints
 hooks/ hooks.json
-rules/ skills/ commands/ agents/ mcp/
+rules/ skills/
+# reserved (not declared in plugin.json until they have real files):
+# agents/ commands/ mcp/
 ```
 
+**plugin.json rule:** only declare component paths that contain real assets. empty `mcp/` / `commands/` / `agents/` dirs must **not** be listed — cursor validation fails and the plugin won't show up. folder discovery picks them up once you add real files.
 ## license
 
 MIT

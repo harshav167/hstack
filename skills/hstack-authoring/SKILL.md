@@ -34,8 +34,7 @@ example future feature: **TTSR** (time-traveling stream rules from oh-my-pi) —
    - subagent → `agents/<name>.md`
    - agent doc → `skills/<name>/SKILL.md`
    - service → `mcp/` entry
-4. register new surface roots in `.cursor-plugin/plugin.json` only if missing
-5. mention the feature in the README under **what's shipping** / **not shipped here** — keep the vision section stable
+4. register new surface roots in `.cursor-plugin/plugin.json` **only after** real files exist (skills with `SKILL.md`, commands with frontmatter, `mcp.json` — never empty dirs). empty `mcpServers`/`commands`/`agents` paths make cursor reject the whole plugin.
 
 shared runtime only: `hook-io.ts`, `config/load.ts`. feature-specific types stay inside `features/<name>/`.
 
