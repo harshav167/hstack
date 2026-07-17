@@ -1,0 +1,20 @@
+{
+	"version": 1,
+	"hooks": {
+		"preToolUse": [
+			{
+				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/pre-tool-use-shell.ts",
+				"matcher": "Shell",
+				"failClosed": true,
+				"timeout": 5
+			}
+		],
+		"beforeShellExecution": [
+			{
+				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/before-shell-execution.ts",
+				"failClosed": true,
+				"timeout": 5
+			}
+		]
+	}
+}

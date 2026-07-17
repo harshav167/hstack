@@ -1,0 +1,23 @@
+---
+description: Prefer Cursor native tools over Shell for file/search/edit/web work. hstack blocks shadowed shell patterns.
+alwaysApply: true
+---
+
+# Native tools first (hstack)
+
+Prefer dedicated Cursor tools over Shell. Wire names vary by session — use whichever your session exposes.
+
+| Instead of Shell | Use |
+| ---------------- | --- |
+| `cat` / `head` / `tail` | `Read` / `ReadFile` |
+| `grep` / `rg` / `ripgrep` | `Grep` / `rg` |
+| `find` / `fd` (name/type) | `Glob` |
+| `sed -i` / `perl -i` | `StrReplace` / `ApplyPatch` |
+| `echo`/`printf` file redirects | `Write` / `ApplyPatch` |
+| `nohup`, trailing `&`, `dev`/`watch` | `Task` / `Subagent` |
+| `curl` / `wget` for docs/URLs | `WebFetch` / `WebSearch` |
+| scrape/click UI | `browser_*` (cursor-ide-browser) |
+
+Shell is for computing facts (`wc -l`, `diff`, build/test) and true process control — not for reading, searching, or editing files.
+
+**hstack hard-denies** Shell commands that shadow `read` / `grep` / `glob` / `edit` / `write` / `hub` capabilities. If blocked, follow the deny message and retry with the named native tool.

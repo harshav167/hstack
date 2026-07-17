@@ -1,0 +1,23 @@
+name: release-please
+
+# Cursor refreshes git-hosted plugins by commit SHA (push / Auto Refresh / manual Refresh).
+# Semver in plugin.json is still the right metadata for humans + marketplace listings.
+# This workflow opens a Release PR that bumps package.json + .cursor-plugin/plugin.json together.
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          release-type: node
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

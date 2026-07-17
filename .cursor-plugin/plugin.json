@@ -1,0 +1,33 @@
+{
+	"name": "hstack",
+	"displayName": "hstack",
+	"version": "0.1.0",
+	"description": "native tools first. hard-deny shell shadows, soft guidance for the rest. a stack you grow — v1 is the shell interceptor; TTSR and more come later.",
+	"author": {
+		"name": "harsha"
+	},
+	"homepage": "https://github.com/harshav167/hstack",
+	"repository": "https://github.com/harshav167/hstack",
+	"license": "MIT",
+	"keywords": [
+		"hstack",
+		"native-tools",
+		"hooks",
+		"shell-interceptor",
+		"omp",
+		"ttsr"
+	],
+	"category": "developer-tools",
+	"tags": [
+		"hooks",
+		"rules",
+		"skills",
+		"enforcement"
+	],
+	"hooks": "./hooks/hooks.json",
+	"rules": "./rules/",
+	"skills": "./skills/",
+	"agents": "./agents/",
+	"commands": "./commands/",
+	"mcpServers": "./mcp/"
+}

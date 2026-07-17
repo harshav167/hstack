@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"strict": true,
+		"noEmit": true,
+		"skipLibCheck": true,
+		"allowImportingTsExtensions": true,
+		"types": ["bun-types"],
+		"paths": {
+			"@hstack/features/*": ["./features/*"],
+			"@hstack/shared/*": ["./src/shared/*"]
+		}
+	},
+	"include": ["features/**/*", "src/**/*", "test/**/*"]
+}
