@@ -1,49 +1,34 @@
 ---
 name: setup-hstack
 description: >-
-  Install and verify the hstack Cursor plugin: enable local plugin, confirm
-  shell-interceptor hooks, optional ~/.hstack/config.json. Use on first setup
-  or when hooks are not denying shadowed Shell commands.
+  Install hstack from GitHub and verify shell-interceptor hooks. Use on first
+  setup or when hooks are not denying shadowed Shell commands.
 ---
 
 # setup-hstack
 
-get hstack live in this cursor install. two outcomes matter: the plugin is enabled, and Shell shadows (`cat`, `rg`, …) return `permission: deny`.
+get hstack live from **GitHub** (not a local symlink). two outcomes matter: the plugin is enabled, and Shell shadows (`cat`, `rg`, …) return `permission: deny`.
 
 ## steps
 
-### 1. locate the plugin root
+### 1. add the github repo as a plugin marketplace
 
-prefer the repo the user cares about (often `~/Developer/hstack` or a clone of `https://github.com/harshav167/hstack`). if unsure, ask once.
+in cursor chat:
 
-install options:
-
-```bash
+```text
 /add-plugin https://github.com/harshav167/hstack
 ```
 
-or local symlink:
+or: **Dashboard → Plugins → Team Marketplaces → Add Marketplace → Import from Repo** → `https://github.com/harshav167/hstack` (tracked branch: `main`).
 
-```bash
-mkdir -p ~/.cursor/plugins/local
-ln -sfn /absolute/path/to/hstack ~/.cursor/plugins/local/hstack
-```
+the repo ships `.cursor-plugin/marketplace.json` listing the `hstack` plugin at the repo root. cursor indexes that — do **not** symlink into `~/.cursor/plugins/local/`.
 
-do not invent a second copy under `~/.cursor/plugins/local/` unless they want a symlink.
-### 2. enable in cursor
+### 2. enable the plugin
 
-**fastest (local):** ensure symlink exists (create-plugin-scaffold default):
+open **Customize → Plugins**, find **hstack**, enable it. reload window if it does not appear after import.
 
-```bash
-mkdir -p ~/.cursor/plugins/local
-ln -sfn /absolute/path/to/hstack ~/.cursor/plugins/local/hstack
-```
+confirm the install is from the github cache / marketplace entry, not a hand-made local path.
 
-then **reload window** (Cmd+Shift+P → "Developer: Reload Window") or restart cursor. hstack should appear under **Customize → Plugins** as a local plugin.
-
-confirm `.cursor-plugin/plugin.json` exists and only declares paths that have real files (`hooks`, `rules`, `skills`). do **not** point `mcpServers`/`commands`/`agents` at empty dirs — that makes cursor reject the plugin.
-
-github `/add-plugin` only works reliably for marketplace / team-marketplace imports, not arbitrary private-dev repos. local symlink is the supported personal path.
 ### 3. optional config
 
 if `~/.hstack/config.json` is missing, offer to create defaults:
@@ -66,10 +51,9 @@ do not write the file unless they say yes (or already asked for defaults).
 
 ### 4. verify hooks
 
-run a real deny/allow check from the plugin root (not a source-grep):
+from a clone of the repo (or the cached install path under `~/.cursor/plugins/cache/`):
 
 ```bash
-cd /path/to/hstack
 echo '{"tool_input":{"command":"cat package.json"}}' | bun src/hooks/pre-tool-use-shell.ts
 echo '{"command":"echo x > /dev/null"}' | bun src/hooks/before-shell-execution.ts
 ```
@@ -86,8 +70,8 @@ remind them: `rules/native-tools-first.mdc` is always-on; `/native-tools` is the
 
 short confirmation only:
 
-- plugin path
+- installed via github (`harshav167/hstack`)
 - interceptor enabled? (default yes)
 - deny smoke passed?
 
-if deny smoke failed: check `bun` on PATH, `CURSOR_PLUGIN_ROOT` in hooks.json, and that the enabled plugin path is this repo (not a stale copy).
+if deny smoke failed: check `bun` on PATH, `CURSOR_PLUGIN_ROOT` in hooks.json, and that Auto Refresh / Refresh pulled the latest `main` commit.

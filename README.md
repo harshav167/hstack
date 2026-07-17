@@ -10,15 +10,15 @@ fork it. extend it. make it yours.
 
 ## install
 
-```bash
+add from github (no local symlink):
+
+```text
 /add-plugin https://github.com/harshav167/hstack
 ```
 
-or clone and enable as a local plugin (Customize → Plugins), or:
+or **Dashboard → Plugins → Add Marketplace → Import from Repo** → `https://github.com/harshav167/hstack` (branch `main`), then enable **hstack** under Customize → Plugins.
 
-```bash
-ln -sfn ~/Developer/hstack ~/.cursor/plugins/local/hstack
-```
+the repo is a single-plugin marketplace: `.cursor-plugin/marketplace.json` + `.cursor-plugin/plugin.json`.
 
 ## updates (how cursor picks up pushes)
 
@@ -26,9 +26,8 @@ cursor indexes plugins from **git commits**, not from semver alone.
 
 | install path | how updates land |
 | --- | --- |
-| **team / custom marketplace** from this repo | push to the tracked branch → Auto Refresh (needs Cursor GitHub App on the repo) or dashboard **Refresh**. re-index batches ~10 min. |
-| **`/add-plugin` github url** | refresh / re-import; local cache can stick — if stale, clear `~/.cursor/plugins/cache/...` or use a local symlink. |
-| **local / symlink** (`~/.cursor/plugins/local/hstack`) | live files; no bump needed to see edits. |
+| **team / custom marketplace** from this repo | push to `main` → Auto Refresh (Cursor GitHub App on the repo) or dashboard **Refresh**. re-index batches ~10 min. |
+| **`/add-plugin` github url** | refresh / re-import the marketplace; clear stale cache under `~/.cursor/plugins/cache/` if the UI sticks. |
 
 **still bump `version` in `.cursor-plugin/plugin.json`.** it's the human + marketplace metadata. this repo uses **release-please**: conventional commits on `main` open a Release PR that bumps `package.json` + `plugin.json` together and tags `vX.Y.Z`.
 
@@ -131,7 +130,7 @@ rules/ skills/
 # agents/ commands/ mcp/
 ```
 
-**plugin.json rule:** only declare component paths that contain real assets. empty `mcp/` / `commands/` / `agents/` dirs must **not** be listed — cursor validation fails and the plugin won't show up. folder discovery picks them up once you add real files.
+**plugin.json rule:** do not declare empty `mcpServers`/`commands`/`agents` paths — cursor rejects the plugin. rely on folder discovery (or declare paths only after real files exist). github install needs `.cursor-plugin/marketplace.json` listing the plugin for `/add-plugin` and Import from Repo.
 ## license
 
 MIT

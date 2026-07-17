@@ -1,0 +1,17 @@
+{
+	"name": "hstack",
+	"owner": {
+		"name": "harsha"
+	},
+	"metadata": {
+		"description": "native tools first — shell interceptor and future hstack features",
+		"version": "0.1.0"
+	},
+	"plugins": [
+		{
+			"name": "hstack",
+			"source": ".",
+			"description": "Hard-deny Shell commands that shadow Cursor native tools (Read/Grep/Glob/…). Extensible stack for TTSR and more."
+		}
+	]
+}

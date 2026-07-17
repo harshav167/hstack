@@ -23,8 +23,5 @@
 		"rules",
 		"skills",
 		"enforcement"
-	],
-	"hooks": "./hooks/hooks.json",
-	"rules": "./rules/",
-	"skills": "./skills/"
+	]
 }
