@@ -22,5 +22,9 @@
 		"hooks",
 		"rules",
 		"skills"
-	]
+	],
+	"hooks": "./hooks/hooks.json",
+	"rules": "./rules/",
+	"skills": "./skills/",
+	"agents": "./agents/"
 }

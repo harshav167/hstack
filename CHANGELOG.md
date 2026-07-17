@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Restore `hooks` / `rules` / `skills` / `agents` paths in `plugin.json` so Custom Modes and surfaces load after marketplace refresh
+
 ## [0.2.0] - 2026-07-17
 
 ## [0.1.0] - 2026-07-17
