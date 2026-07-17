@@ -41,10 +41,12 @@ commit style for auto-bump:
 
 two steps:
 
-1. run [`/setup-hstack`](./skills/setup-hstack/SKILL.md) — enable the plugin, confirm hooks, optional `~/.hstack/config.json`.
-2. use cursor normally. shadowed shell (`cat`, `rg`, `find -name`, …) gets **denied** with a redirect to the native tool (`Read`/`ReadFile`, `Grep`/`rg`, …).
+1. install from github (`/add-plugin https://github.com/harshav167/hstack`), enable **hstack**.
+2. optional: pick **Hstack Mode** in the mode dropdown (Custom Modes / beta) — same pattern as pstack's Poteto Mode — or run `/hstack-mode`.
 
-that's it. soft guidance rides along via [`rules/native-tools-first.mdc`](./rules/native-tools-first.mdc) and [`/native-tools`](./skills/native-tools/SKILL.md).
+shadowed shell (`cat`, `rg`, `find -name`, …) gets **denied** with a redirect either way (hooks). the mode makes the preference sticky in the picker.
+
+soft guidance also rides along via [`rules/native-tools-first.mdc`](./rules/native-tools-first.mdc) and [`/native-tools`](./skills/native-tools/SKILL.md).
 
 ## what's shipping (v1)
 
@@ -54,7 +56,8 @@ that's it. soft guidance rides along via [`rules/native-tools-first.mdc`](./rule
 | **feature** | [`features/shell-interceptor/`](./features/shell-interceptor/) — omp regex parity, `cd … &&` dual-check |
 | **registry** | capability IDs + wire-name aliases (`Read`/`ReadFile`, `Grep`/`rg`, `StrReplace`/`ApplyPatch`, `Task`/`Subagent`, …) — no model-family detection |
 | **rule** | always-on native-tools-first |
-| **skills** | `setup-hstack`, `native-tools`, `hstack-authoring` |
+| **skills** | `setup-hstack`, `native-tools`, `hstack-authoring`, **`hstack-mode`** (`mode: true` → Custom Modes picker) |
+| **agents** | `hstack-agent` — subagent routing for hstack-mode |
 
 defaults: interceptor **on**. set `"enabled": false` in config for omp-identical opt-in behavior.
 
@@ -74,10 +77,21 @@ see [`/hstack-authoring`](./skills/hstack-authoring/SKILL.md) for the add-a-feat
 
 | skill | use it when |
 | --- | --- |
-| [`/setup-hstack`](./skills/setup-hstack/SKILL.md) | first install, or hooks aren't firing |
+| [`/setup-hstack`](./skills/setup-hstack/SKILL.md) | first install from github, or hooks aren't firing |
+| [`/hstack-mode`](./skills/hstack-mode/SKILL.md) | sticky native-tools-first mode (shows under Custom Modes when `mode: true`) |
 | [`/native-tools`](./skills/native-tools/SKILL.md) | agent should prefer Read/Grep/Glob/… over Shell |
 | [`/hstack-authoring`](./skills/hstack-authoring/SKILL.md) | adding TTSR or any new feature folder |
 
+### custom mode vs skill vs hooks
+
+| layer | what it is | pstack equivalent |
+| --- | --- | --- |
+| **Custom Mode** (beta picker) | a skill with `mode: true` (+ `icon` / `color`) in frontmatter | `skills/poteto-mode` → **Poteto Mode** |
+| **skill** (`/name`) | invokable guidance; optional `disable-model-invocation` | `/how`, `/interrogate`, … |
+| **agent** | `agents/*.md` — `subagent_type` target | `agents/poteto-agent.md` |
+| **hooks** | hard deny / observe — not a mode | (pstack doesn't ship shell gates) |
+
+hstack's hard enforcement is **hooks**. **Hstack Mode** is the sticky soft posture in the mode dropdown — same shipping trick as pstack, different job.
 ## config
 
 optional: `~/.hstack/config.json`
