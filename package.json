@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
-	"description": "Cursor plugin: native-tools enforcement via shell interception",
+	"description": "Cursor plugin stack (shell interceptor + more)",
 	"scripts": {
 		"test": "bun test",
 		"check": "bunx tsc --noEmit"

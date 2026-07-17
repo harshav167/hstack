@@ -2,7 +2,7 @@
 	"name": "hstack",
 	"displayName": "hstack",
 	"version": "0.1.0",
-	"description": "native tools first. hard-deny shell shadows, soft guidance for the rest. a stack you grow — v1 is the shell interceptor; TTSR and more come later.",
+	"description": "a cursor plugin you grow. first feature: shell interceptor. room for TTSR and more.",
 	"author": {
 		"name": "harsha"
 	},
@@ -11,17 +11,16 @@
 	"license": "MIT",
 	"keywords": [
 		"hstack",
-		"native-tools",
 		"hooks",
+		"skills",
+		"plugins",
 		"shell-interceptor",
-		"omp",
 		"ttsr"
 	],
 	"category": "developer-tools",
 	"tags": [
 		"hooks",
 		"rules",
-		"skills",
-		"enforcement"
+		"skills"
 	]
 }

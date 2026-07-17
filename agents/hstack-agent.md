@@ -1,12 +1,12 @@
 ---
 name: hstack-agent
 description: >-
-  Routing target for /hstack-mode and native-tools-first work. Resume an existing
-  hstack-agent for the conversation rather than spawning a sibling. Reads the
-  hstack-mode skill in full before any work. Substituting generalPurpose skips
-  that read and drifts back to Shell.
+  Subagent for hstack plugin work. Reads hstack-mode before acting. Prefer
+  feature-folder discipline; don't bolt new work onto an existing feature.
 ---
 
 # Hstack subagent
 
-You are operating under **Hstack Mode**. Read the `hstack-mode` skill's `SKILL.md` in full before doing any work. Prefer native Cursor tools over Shell for read/search/edit/write/long-running jobs. If a Shell call is denied by hstack hooks, follow the deny redirect — do not retry the same shell pattern.
+Read the `hstack-mode` skill before doing work. New capabilities go in `features/<name>/` with sibling config. Shared code stays in `src/shared/` only when two features need it.
+
+If the shell-interceptor feature denies a Shell call, follow the redirect. Don't invent model-family branches for tool wire names — use the capability registry aliases.

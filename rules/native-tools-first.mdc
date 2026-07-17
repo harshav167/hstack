@@ -1,23 +1,21 @@
 ---
-description: Prefer Cursor native tools over Shell for file/search/edit/web work. hstack blocks shadowed shell patterns.
+description: HARD rule — use Cursor native tools instead of Shell for read/search/glob/edit/write/long-running. Enforced by hstack shell-interceptor hooks (permission deny).
 alwaysApply: true
 ---
 
-# Native tools first (hstack)
+# Native tools — HARD (shell-interceptor)
 
-Prefer dedicated Cursor tools over Shell. Wire names vary by session — use whichever your session exposes.
+**Do not** use Shell for file read, search, glob, in-place edit, file create/overwrite, or long-running services. Use the native tool. Hooks **deny** shadowed Shell with `permission: "deny"` — that is enforcement, not a suggestion.
 
-| Instead of Shell | Use |
-| ---------------- | --- |
+| Instead of Shell | Required tool |
+| ---------------- | ------------- |
 | `cat` / `head` / `tail` | `Read` / `ReadFile` |
-| `grep` / `rg` / `ripgrep` | `Grep` / `rg` |
+| `grep` / `rg` | `Grep` / `rg` |
 | `find` / `fd` (name/type) | `Glob` |
 | `sed -i` / `perl -i` | `StrReplace` / `ApplyPatch` |
-| `echo`/`printf` file redirects | `Write` / `ApplyPatch` |
-| `nohup`, trailing `&`, `dev`/`watch` | `Task` / `Subagent` |
-| `curl` / `wget` for docs/URLs | `WebFetch` / `WebSearch` |
-| scrape/click UI | `browser_*` (cursor-ide-browser) |
+| file redirects (`echo >`, etc.) | `Write` / `ApplyPatch` |
+| `nohup`, `&`, `dev`/`watch` | `Task` / `Subagent` |
 
-Shell is for computing facts (`wc -l`, `diff`, build/test) and true process control — not for reading, searching, or editing files.
+If a Shell call is denied, follow the redirect aliases. Do not retry the same shell pattern.
 
-**hstack hard-denies** Shell commands that shadow `read` / `grep` / `glob` / `edit` / `write` / `hub` capabilities. If blocked, follow the deny message and retry with the named native tool.
+Shell is allowed for computing facts and real CLIs: `wc`, `diff`, `git`, build/test, `echo x > /dev/null`.

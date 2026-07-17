@@ -43,7 +43,7 @@ if `~/.hstack/config.json` is missing, offer to create defaults:
 }
 ```
 
-- `enabled: false` → omp-style opt-out (allow all)
+- `enabled: false` → opt-out (allow all; turns the hard gate off)
 - `patterns: []` → allow all while keeping the feature installed
 - never put wire names (`Read`, `rg`) in `activeCapabilities` — use capability IDs only
 
@@ -62,9 +62,9 @@ expect: first → `"permission":"deny"` with `Read` / `ReadFile` in `agent_messa
 
 then ask the user to trigger one Shell `cat` in a chat and glance at the **Hooks** output channel for the same deny JSON.
 
-### 5. confirm soft layer
+### 5. hard rule layer
 
-remind them: `rules/native-tools-first.mdc` is always-on; `/native-tools` is there when the agent needs the inventory. authoring later features → `/hstack-authoring`.
+`rules/native-tools-first.mdc` is always-on **HARD** (same policy as the hooks). `/native-tools` is the alias inventory after a deny. authoring later features → `/hstack-authoring`.
 
 ### 6. done
 

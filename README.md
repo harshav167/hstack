@@ -1,100 +1,75 @@
 # hstack
 
-frontier models keep shelling out — `cat`, `grep`, `rg`, `find` — until you nag them. cursor already has the right tools. the problem is the path of least resistance.
+a cursor plugin you grow. features live in folders. hooks, rules, skills, agents, commands, mcp — pick what each feature needs.
 
-**hstack is the answer.** hard gates where soft prompts fail, plus skills and rules so the agent prefers native tools without a lecture every turn.
+the first feature is a **shell interceptor** (omp-parity): **hard-deny** Shell when it shadows native tools. more features come later (TTSR from oh-my-pi, and whatever else belongs here). the interceptor is one feature, not the product name.
 
-v1 ships one feature: an **omp-parity shell interceptor** (deny + redirect). the repo is not "bash-interceptor the plugin" — it's a **stack** you grow. next up can be TTSR (time-traveling stream rules from oh-my-pi), more gates, commands, agents, mcp — each as its own feature folder, not a bolt-on.
-
-fork it. extend it. make it yours.
+fork it. extend it.
 
 ## install
-
-add from github (no local symlink):
 
 ```text
 /add-plugin https://github.com/harshav167/hstack
 ```
 
-or **Dashboard → Plugins → Add Marketplace → Import from Repo** → `https://github.com/harshav167/hstack` (branch `main`), then enable **hstack** under Customize → Plugins.
+or **Dashboard → Plugins → Add Marketplace → Import from Repo** → `https://github.com/harshav167/hstack` (branch `main`), then enable **hstack**.
 
-the repo is a single-plugin marketplace: `.cursor-plugin/marketplace.json` + `.cursor-plugin/plugin.json`.
+layout for github import: `.cursor-plugin/marketplace.json` + `.cursor-plugin/plugin.json`.
 
-## updates (how cursor picks up pushes)
+## updates
 
-cursor indexes plugins from **git commits**, not from semver alone.
+cursor re-indexes from **git pushes** (commit SHA). bump `version` in `plugin.json` anyway — humans and marketplace metadata care.
 
-| install path | how updates land |
+| path | updates |
 | --- | --- |
-| **team / custom marketplace** from this repo | push to `main` → Auto Refresh (Cursor GitHub App on the repo) or dashboard **Refresh**. re-index batches ~10 min. |
-| **`/add-plugin` github url** | refresh / re-import the marketplace; clear stale cache under `~/.cursor/plugins/cache/` if the UI sticks. |
+| team / custom marketplace | push to `main` → Auto Refresh (Cursor GitHub App) or dashboard Refresh |
+| `/add-plugin` | refresh / re-import; clear `~/.cursor/plugins/cache/` if stuck |
 
-**still bump `version` in `.cursor-plugin/plugin.json`.** it's the human + marketplace metadata. this repo uses **release-please**: conventional commits on `main` open a Release PR that bumps `package.json` + `plugin.json` together and tags `vX.Y.Z`.
-
-commit style for auto-bump:
-
-- `feat:` → minor (pre-1.0: still bumps usefully via release-please config)
-- `fix:` → patch
-- `feat!:` / `BREAKING CHANGE:` → major
+**release** runs on every push to `main`. If there are conventional `feat:` / `fix:` / breaking commits since the last `v*` tag, it bumps `package.json` + both `.cursor-plugin/*.json`, tags, and creates a GitHub Release — **no Release PR**, so you do not need “Allow GitHub Actions to create pull requests”.
 
 ## get started
 
-two steps:
+1. install from github, enable **hstack**
+2. optional: pick **Hstack Mode** in the mode dropdown, or `/hstack-mode`
+3. optional: `/setup-hstack` to verify hooks + config
 
-1. install from github (`/add-plugin https://github.com/harshav167/hstack`), enable **hstack**.
-2. optional: pick **Hstack Mode** in the mode dropdown (Custom Modes / beta) — same pattern as pstack's Poteto Mode — or run `/hstack-mode`.
+shell-interceptor is **on by default**. shadowed Shell is **denied** by hooks (`permission: "deny"`).
 
-shadowed shell (`cat`, `rg`, `find -name`, …) gets **denied** with a redirect either way (hooks). the mode makes the preference sticky in the picker.
-
-soft guidance also rides along via [`rules/native-tools-first.mdc`](./rules/native-tools-first.mdc) and [`/native-tools`](./skills/native-tools/SKILL.md).
-
-## what's shipping (v1)
+## what's in the repo
 
 | surface | what |
 | --- | --- |
-| **hooks** | `preToolUse` (Shell) + `beforeShellExecution` — `permission: deny` + `failClosed` |
-| **feature** | [`features/shell-interceptor/`](./features/shell-interceptor/) — omp regex parity, `cd … &&` dual-check |
-| **registry** | capability IDs + wire-name aliases (`Read`/`ReadFile`, `Grep`/`rg`, `StrReplace`/`ApplyPatch`, `Task`/`Subagent`, …) — no model-family detection |
-| **rule** | always-on native-tools-first |
-| **skills** | `setup-hstack`, `native-tools`, `hstack-authoring`, **`hstack-mode`** (`mode: true` → Custom Modes picker) |
-| **agents** | `hstack-agent` — subagent routing for hstack-mode |
+| **features/shell-interceptor/** | **hard gate**: deny Shell shadows of read/grep/glob/edit/write/hub |
+| **hooks** | `preToolUse` (Shell) + `beforeShellExecution` — `failClosed` deny |
+| **registry** | capability IDs + wire-name aliases (no model-family detection) |
+| **rule** | `native-tools-first` — always-on **HARD** rule; hooks enforce it |
+| **skills** | setup, authoring, native-tools inventory, **hstack-mode** (`mode: true`) |
+| **agents** | `hstack-agent` |
 
-defaults: interceptor **on**. set `"enabled": false` in config for omp-identical opt-in behavior.
-
-## not shipped here (yet)
-
-reserved roots so we don't restructure later:
-
-- **TTSR** — time-traveling stream rules (omp `TtsrManager`). kind: injector. lives in `features/ttsr/` when ported.
-- **commands/** — slash commands (e.g. `hstack ttsr test`)
-- **agents/** — subagent defs (pstack-style)
-- **mcp/** — long-running services
-- more **gates** — web/browser/mcp hard intercept (soft-only in v1)
-
-see [`/hstack-authoring`](./skills/hstack-authoring/SKILL.md) for the add-a-feature recipe.
+reserved empty dirs (`commands/`, `mcp/`) stay undeclared in `plugin.json` until they have real files.
 
 ## skills
 
-| skill | use it when |
+| skill | when |
 | --- | --- |
-| [`/setup-hstack`](./skills/setup-hstack/SKILL.md) | first install from github, or hooks aren't firing |
-| [`/hstack-mode`](./skills/hstack-mode/SKILL.md) | sticky native-tools-first mode (shows under Custom Modes when `mode: true`) |
-| [`/native-tools`](./skills/native-tools/SKILL.md) | agent should prefer Read/Grep/Glob/… over Shell |
-| [`/hstack-authoring`](./skills/hstack-authoring/SKILL.md) | adding TTSR or any new feature folder |
+| [`/setup-hstack`](./skills/setup-hstack/SKILL.md) | github install / hook smoke |
+| [`/hstack-mode`](./skills/hstack-mode/SKILL.md) | sticky mode in the picker |
+| [`/native-tools`](./skills/native-tools/SKILL.md) | alias inventory for the interceptor feature |
+| [`/hstack-authoring`](./skills/hstack-authoring/SKILL.md) | add the next feature |
 
-### custom mode vs skill vs hooks
+### mode vs skill vs hooks
 
-| layer | what it is | pstack equivalent |
-| --- | --- | --- |
-| **Custom Mode** (beta picker) | a skill with `mode: true` (+ `icon` / `color`) in frontmatter | `skills/poteto-mode` → **Poteto Mode** |
-| **skill** (`/name`) | invokable guidance; optional `disable-model-invocation` | `/how`, `/interrogate`, … |
-| **agent** | `agents/*.md` — `subagent_type` target | `agents/poteto-agent.md` |
-| **hooks** | hard deny / observe — not a mode | (pstack doesn't ship shell gates) |
+| layer | job |
+| --- | --- |
+| **hooks** | **hard deny** — why this feature exists |
+| **rule** | always-on HARD instruction (same policy; hooks make it stick) |
+| **Custom Mode** | skill with `mode: true` (+ `icon` / `color`) — same as pstack Poteto Mode |
+| **skill** | `/name` inventory / authoring |
+| **agent** | `subagent_type` target |
 
-hstack's hard enforcement is **hooks**. **Hstack Mode** is the sticky soft posture in the mode dropdown — same shipping trick as pstack, different job.
 ## config
 
-optional: `~/.hstack/config.json`
+`~/.hstack/config.json` — sibling keys per feature:
 
 ```json
 {
@@ -106,23 +81,15 @@ optional: `~/.hstack/config.json`
 }
 ```
 
-| field | meaning |
-| --- | --- |
-| `enabled` | default **true** |
-| `activeCapabilities` | stable IDs — not wire names |
-| `patterns` | `null` = defaults; `[]` = allow all; non-empty = replace |
+`patterns: null` = defaults; `[]` = allow all (turns the gate off). future keys (e.g. `ttsr`) sit beside `shellInterceptor`, not under it.
 
-sibling keys (e.g. `ttsr`) land later without nesting under `shellInterceptor`.
+## smoke (shell-interceptor)
 
-## smoke
-
-after setup:
-
-1. `cat package.json` → deny → `Read` / `ReadFile`
-2. `rg pattern` → deny → `Grep` / `rg`
+1. `cat package.json` → **deny** → Read / ReadFile
+2. `rg pattern` → **deny** → Grep / rg
 3. `echo x > /dev/null` → allow
-4. `cd dir && cat file` → deny (dual-check)
-5. Hooks channel shows valid JSON
+4. `cd dir && cat file` → **deny**
+5. Hooks channel shows `permission: "deny"` / `"allow"`
 
 ## develop
 
@@ -132,19 +99,15 @@ bun install
 bun test
 ```
 
-layout:
-
 ```
-features/<name>/     # one product feature per folder
-src/shared/          # hook-io, config, capability registry
-src/hooks/           # thin cursor entrypoints
-hooks/ hooks.json
-rules/ skills/
-# reserved (not declared in plugin.json until they have real files):
-# agents/ commands/ mcp/
+features/<name>/     # one feature per folder
+src/shared/          # hook-io, config, registry
+src/hooks/           # thin entrypoints
+hooks/ rules/ skills/ agents/
 ```
 
-**plugin.json rule:** do not declare empty `mcpServers`/`commands`/`agents` paths — cursor rejects the plugin. rely on folder discovery (or declare paths only after real files exist). github install needs `.cursor-plugin/marketplace.json` listing the plugin for `/add-plugin` and Import from Repo.
+don't declare empty `mcpServers` / `commands` / `agents` paths in `plugin.json` — cursor rejects the plugin.
+
 ## license
 
 MIT

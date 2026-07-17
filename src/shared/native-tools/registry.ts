@@ -1,7 +1,6 @@
 /**
- * Model-agnostic capability registry.
- * Stable IDs internally; wire-name aliases for deny messages and soft guidance.
- * New alias discovered in the wild → append to `aliases[]`. No model-family branches.
+ * Capability registry: stable IDs + Cursor wire-name aliases for deny messages.
+ * Append new aliases; never branch on model family.
  */
 
 export interface NativeCapability {
@@ -11,15 +10,15 @@ export interface NativeCapability {
 	aliases: string[];
 	/** Human phrase for messages ("native read tool"). */
 	denyLabel: string;
-	/** Hard-intercept in v1 shell-interceptor, or soft guidance only. */
-	enforcement: "hard" | "soft";
+	/** Hooked hard deny today, or inventory until a gate exists. */
+	enforcement: "hard" | "inventory";
 }
 
 export function aliasListForMessage(capability: NativeCapability): string {
 	return capability.aliases.join(" / ");
 }
 
-/** omp-mapped hard intercept + soft inventory. */
+/** Hard-hooked capabilities + inventory for future gates. */
 export const NATIVE_CAPABILITIES: NativeCapability[] = [
 	{
 		id: "read",
@@ -61,25 +60,25 @@ export const NATIVE_CAPABILITIES: NativeCapability[] = [
 		id: "delete",
 		aliases: ["Delete"],
 		denyLabel: "native delete tool",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "notebook",
 		aliases: ["EditNotebook"],
 		denyLabel: "native notebook tool",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "lints",
 		aliases: ["ReadLints"],
 		denyLabel: "native lints tool",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "web",
 		aliases: ["WebSearch", "WebFetch"],
 		denyLabel: "native web tool",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "browser",
@@ -96,49 +95,49 @@ export const NATIVE_CAPABILITIES: NativeCapability[] = [
 			"browser_cdp",
 		],
 		denyLabel: "cursor-ide-browser MCP tools",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "mcp",
 		aliases: ["GetMcpTools", "CallMcpTool", "FetchMcpResource"],
 		denyLabel: "native MCP tools",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "conversations",
 		aliases: ["SearchConversations"],
 		denyLabel: "native conversation search",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "workflow",
 		aliases: ["TodoWrite", "AskQuestion", "SwitchMode"],
 		denyLabel: "native workflow tools",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "workspace",
 		aliases: ["SetActiveBranch"],
 		denyLabel: "native workspace tools",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "image",
 		aliases: ["GenerateImage", "image_gen"],
 		denyLabel: "native image tool",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "shell",
 		aliases: ["Shell", "AwaitShell"],
 		denyLabel: "shell tool",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 	{
 		id: "parallel",
 		aliases: ["multi_tool_use.parallel"],
 		denyLabel: "parallel tool orchestration",
-		enforcement: "soft",
+		enforcement: "inventory",
 	},
 ];
 

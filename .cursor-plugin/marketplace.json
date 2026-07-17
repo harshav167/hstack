@@ -4,14 +4,14 @@
 		"name": "harsha"
 	},
 	"metadata": {
-		"description": "native tools first — shell interceptor and future hstack features",
+		"description": "cursor plugin stack — shell interceptor today, more features later",
 		"version": "0.1.0"
 	},
 	"plugins": [
 		{
 			"name": "hstack",
 			"source": ".",
-			"description": "Hard-deny Shell commands that shadow Cursor native tools (Read/Grep/Glob/…). Extensible stack for TTSR and more."
+			"description": "Extensible Cursor plugin. Ships a shell interceptor; add TTSR and other features as siblings."
 		}
 	]
 }

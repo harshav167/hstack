@@ -1,43 +1,37 @@
 ---
 name: Hstack Mode
 description: >-
-  Native-tools-first agent style for hstack. Prefer Read/Grep/Glob/StrReplace/Write/Task
-  over Shell; respect hard denies; extend the stack without bolting onto shell-interceptor.
-  Use for hstack, /hstack-mode, or requests to work native-tools-first.
+  Work in the hstack plugin style: feature folders, sibling config, hard hooks
+  for gates. Use for hstack, /hstack-mode, or extending the plugin.
 disable-model-invocation: true
 mode: true
 icon: shield
 color: blue
-reminder: About to Shell for read/search/edit? Use the native tool instead. Casual turn or user opts out -> don't force the mode.
+reminder: New feature? New features/<name>/ folder. Don't bolt onto an existing feature.
 ---
 
 # Hstack mode
 
-Sticky posture while this mode is selected. Soft guidance always rides along via `native-tools-first` rules; this mode makes the preference **explicit and sticky** in the mode picker (same mechanism as pstack's Poteto Mode).
+Sticky posture for working **on or with** the hstack plugin.
 
 ## Non-negotiables
 
-1. **Native before Shell.** File read → `Read`/`ReadFile`. Search → `Grep`/`rg`. Paths → `Glob`. Edit → `StrReplace`/`ApplyPatch`. Create/overwrite → `Write`/`ApplyPatch`. Long-running → `Task`/`Subagent`.
-2. **If hstack denies a Shell call, do not retry the same shell pattern.** Follow the deny message aliases and call the named native tool.
-3. **Shell is for computing facts and real CLI work** (`wc`, `diff`, `git`, build/test) — not for reading, grepping, or editing files.
-4. **Wire names vary by session.** Never detect model family. Use whichever alias the session exposes (`Read` or `ReadFile`, `Grep` or `rg`, …). Inventory lives in `/native-tools`.
-5. **Extending hstack** → `/hstack-authoring`. New feature = new `features/<name>/` + wiring. Never bolt TTSR (or anything else) into `shell-interceptor/`.
+1. **Feature folders.** One product feature per `features/<name>/`. Zero cross-feature imports.
+2. **Sibling config.** New knobs go next to existing keys in `~/.hstack/config.json` — never nested under another feature.
+3. **Declare only real surfaces.** Don't list empty `mcpServers` / `commands` / `agents` paths in `plugin.json`.
+4. **Shared runtime stays thin.** `hook-io`, `config/load` — no feature logic in `src/shared/`.
+5. **Authoring recipe.** `/hstack-authoring` for gate / injector / command / agent / mcp.
 
-## When Shell is correct
+## Shell interceptor (one feature — HARD)
 
-- Device sinks: `echo x > /dev/null`
-- Finite builds/tests without watch: `bun test`, `docker compose up -d`
-- Git porcelain that needs the real CLI
-- Process control with no native equivalent
+When enabled, **must** use native tools for read/search/glob/edit/write/long-running jobs. Hooks **deny** shadowed Shell (`permission: "deny"`). If denied, follow the redirect; do not retry the same shell. Inventory: `/native-tools`.
 
-## Soft web/browser (not hard-denied in v1)
-
-Prefer `WebFetch`/`WebSearch` and `browser_*` over `curl`/`wget` scrapes. See `/native-tools`.
+Shell stays allowed for `wc`, `diff`, `git`, builds/tests, and real process control.
 
 ## Subagents
 
-For delegates that must keep this posture, use `subagent_type: "hstack-agent"` when available. Substituting `generalPurpose` skips this skill and drifts back to Shell.
+Use `subagent_type: "hstack-agent"` when the delegate must keep this posture.
 
 ## Opt out
 
-Say so, or switch the mode picker away from **Hstack Mode**. Hooks still hard-deny shadowed Shell either way.
+Switch the mode picker away, or say so. Set `shellInterceptor.enabled: false` to turn the hard gate off in config.
