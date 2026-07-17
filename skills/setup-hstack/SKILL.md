@@ -32,10 +32,18 @@ ln -sfn /absolute/path/to/hstack ~/.cursor/plugins/local/hstack
 do not invent a second copy under `~/.cursor/plugins/local/` unless they want a symlink.
 ### 2. enable in cursor
 
-tell the user to open **Customize → Plugins** (or Settings → Plugins) and enable **hstack**. if they use the symlink, reload plugins / restart cursor if the entry does not appear.
+**fastest (local):** ensure symlink exists (create-plugin-scaffold default):
 
-confirm `.cursor-plugin/plugin.json` exists and declares `hooks`, `rules`, `skills`.
+```bash
+mkdir -p ~/.cursor/plugins/local
+ln -sfn /absolute/path/to/hstack ~/.cursor/plugins/local/hstack
+```
 
+then **reload window** (Cmd+Shift+P → "Developer: Reload Window") or restart cursor. hstack should appear under **Customize → Plugins** as a local plugin.
+
+confirm `.cursor-plugin/plugin.json` exists and only declares paths that have real files (`hooks`, `rules`, `skills`). do **not** point `mcpServers`/`commands`/`agents` at empty dirs — that makes cursor reject the plugin.
+
+github `/add-plugin` only works reliably for marketplace / team-marketplace imports, not arbitrary private-dev repos. local symlink is the supported personal path.
 ### 3. optional config
 
 if `~/.hstack/config.json` is missing, offer to create defaults:
