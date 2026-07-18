@@ -169,11 +169,11 @@ export function userLspConfigPath(): string {
 }
 
 /**
- * Load and merge server configs for `cwd`, gated to servers whose root markers
- * match the project and whose binary resolves. Missing/invalid files are skipped;
- * the bundled table always applies.
+ * Merge server configs for `cwd` without availability gating.
+ * Pure merge of bundled → user → project sources; binary/root-marker
+ * filtering happens in loadServerConfig. Exported for hermetic tests.
  */
-export function loadServerConfig(cwd: string): LspConfig {
+export function loadMergedServerConfig(cwd: string): LspConfig {
 	let merged = coerceServerConfigs(BUNDLED_SERVERS as Record<string, RawServerConfig>);
 	let idleTimeoutMs: number | undefined;
 
@@ -185,6 +185,17 @@ export function loadServerConfig(cwd: string): LspConfig {
 		}
 		if (parsed.idleTimeoutMs !== undefined) idleTimeoutMs = parsed.idleTimeoutMs;
 	}
+
+	return { servers: merged, idleTimeoutMs };
+}
+
+/**
+ * Load and merge server configs for `cwd`, gated to servers whose root markers
+ * match the project and whose binary resolves. Missing/invalid files are skipped;
+ * the bundled table always applies.
+ */
+export function loadServerConfig(cwd: string): LspConfig {
+	const { servers: merged, idleTimeoutMs } = loadMergedServerConfig(cwd);
 
 	const available: Record<string, ServerConfig> = {};
 	for (const [name, config] of Object.entries(merged)) {

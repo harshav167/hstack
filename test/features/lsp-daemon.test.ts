@@ -84,7 +84,7 @@ describe("daemon protocol", () => {
 		expect(status.daemonStatus.sessions).not.toContain("s1");
 	});
 
-	test("diagnose against the TS fixture surfaces the unused variable", async () => {
+	test.skipIf(Bun.which("oxlint") === null)("diagnose against the TS fixture surfaces the unused variable", async () => {
 		const root = path.join(import.meta.dir, "..", "fixtures", "lsp", "ts-project");
 		const file = path.join(root, "src", "error.ts");
 		const content = await Bun.file(file).text();
@@ -109,7 +109,7 @@ describe("daemon protocol", () => {
 		}
 	}, 30_000);
 
-	test("second identical diagnose dedups to clean", async () => {
+	test.skipIf(Bun.which("oxlint") === null)("second identical diagnose dedups to clean", async () => {
 		const root = path.join(import.meta.dir, "..", "fixtures", "lsp", "ts-project");
 		const file = path.join(root, "src", "error.ts");
 		const content = await Bun.file(file).text();

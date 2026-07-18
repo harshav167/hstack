@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getServersForFile, loadServerConfig } from "../../features/lsp/config.ts";
+import { getServersForFile, loadMergedServerConfig, loadServerConfig } from "../../features/lsp/config.ts";
 
 function withTmpProject(files: Record<string, string>, fn: (root: string) => void): void {
 	const root = fs.mkdtempSync(path.join(os.tmpdir(), "hstack-lsp-config-"));
@@ -18,14 +18,16 @@ function withTmpProject(files: Record<string, string>, fn: (root: string) => voi
 	}
 }
 
-describe("loadServerConfig", () => {
+// Merge-shape assertions run against loadMergedServerConfig — the pure layer
+// with no binary/PATH gating — so they hold on machines with no servers
+// installed (CI). Availability gating gets its own hermetic tests below.
+describe("loadMergedServerConfig", () => {
 	test("bundled table applies with no overrides", () => {
 		withTmpProject({}, root => {
-			const config = loadServerConfig(root);
+			const config = loadMergedServerConfig(root);
 			expect(Object.keys(config.servers).length).toBeGreaterThan(0);
 			expect(config.servers["typescript-7"]).toBeDefined();
 			expect(config.servers["typescript-7"]?.command).toBe("tsgo");
-			expect(config.servers["typescript-7"]?.resolvedCommand).toBeTruthy();
 			// pyright etc are absent from the bundled table entirely
 			expect(config.servers.pyright).toBeUndefined();
 		});
@@ -41,9 +43,9 @@ describe("loadServerConfig", () => {
 				}),
 			},
 			root => {
-				const config = loadServerConfig(root);
-				expect(config.servers["typescript-7"]).toBeUndefined();
-				expect(config.servers.oxc).toBeDefined();
+				const config = loadMergedServerConfig(root);
+				expect(config.servers["typescript-7"]?.disabled).toBe(true);
+				expect(config.servers.oxc?.disabled).toBeUndefined();
 			},
 		);
 	});
@@ -58,7 +60,7 @@ describe("loadServerConfig", () => {
 				}),
 			},
 			root => {
-				const config = loadServerConfig(root);
+				const config = loadMergedServerConfig(root);
 				const ruff = config.servers.ruff;
 				expect(ruff).toBeDefined();
 				expect(ruff?.command).toBe("ruff");
@@ -78,7 +80,7 @@ describe("loadServerConfig", () => {
 				}),
 			},
 			root => {
-				const config = loadServerConfig(root);
+				const config = loadMergedServerConfig(root);
 				const snyk = config.servers.snyk;
 				expect(snyk).toBeDefined();
 				expect(snyk?.initOptions?.token).toBe("test-token-123");
@@ -98,7 +100,7 @@ describe("loadServerConfig", () => {
 				}),
 			},
 			root => {
-				const config = loadServerConfig(root);
+				const config = loadMergedServerConfig(root);
 				const scan = config.servers.semgrep?.initOptions?.scan as Record<string, unknown> | undefined;
 				expect(scan?.ci).toBe(true);
 				expect(Array.isArray(scan?.configuration)).toBe(true);
@@ -114,30 +116,37 @@ describe("loadServerConfig", () => {
 				}),
 			},
 			root => {
-				const config = loadServerConfig(root);
-				expect(config.servers.snyk).toBeUndefined();
-				expect(config.servers.oxc).toBeDefined();
+				const config = loadMergedServerConfig(root);
+				expect(config.servers.snyk?.disabled).toBe(true);
+				expect(config.servers.oxc?.disabled).toBeUndefined();
 			},
 		);
 	});
 
-	test("slash-bearing command resolves against the project root", () => {
+	test("custom server registers alongside bundled", () => {
 		withTmpProject(
 			{
-				"bin/server": "#!/bin/sh\n",
 				"lsp.json": JSON.stringify({
 					servers: {
-						custom: { command: "./bin/server", fileTypes: [".xyz"], rootMarkers: ["."] },
+						custom: {
+							command: "some-server",
+							args: ["--stdio"],
+							fileTypes: [".xyz"],
+							rootMarkers: ["."],
+						},
 					},
 				}),
 			},
 			root => {
-				const config = loadServerConfig(root);
-				expect(config.servers.custom?.resolvedCommand).toBe(path.join(root, "bin", "server"));
+				const config = loadMergedServerConfig(root);
+				expect(config.servers.custom).toBeDefined();
+				expect(config.servers.custom?.fileTypes).toEqual([".xyz"]);
 			},
 		);
 	});
+});
 
+describe("loadServerConfig availability gating", () => {
 	test("server without a resolvable binary drops out", () => {
 		withTmpProject(
 			{
@@ -158,24 +167,51 @@ describe("loadServerConfig", () => {
 		);
 	});
 
-	test("custom server registers alongside bundled", () => {
+	test("disabled servers drop out", () => {
 		withTmpProject(
 			{
 				"lsp.json": JSON.stringify({
+					servers: { "typescript-7": { disabled: true }, oxc: { disabled: true }, semgrep: { disabled: true }, snyk: { disabled: true } },
+				}),
+			},
+			root => {
+				const config = loadServerConfig(root);
+				expect(config.servers["typescript-7"]).toBeUndefined();
+				expect(config.servers.oxc).toBeUndefined();
+			},
+		);
+	});
+
+	test("project-local binary resolves with an absolute path", () => {
+		withTmpProject(
+			{
+				"node_modules/.bin/fake-server": "#!/bin/sh\nexit 0\n",
+				"lsp.json": JSON.stringify({
 					servers: {
-						custom: {
-							command: "ruff",
-							args: ["server"],
-							fileTypes: [".xyz"],
-							rootMarkers: ["."],
-						},
+						fake: { command: "fake-server", fileTypes: [".xyz"], rootMarkers: ["."] },
 					},
 				}),
 			},
 			root => {
 				const config = loadServerConfig(root);
-				expect(config.servers.custom).toBeDefined();
-				expect(config.servers.custom?.fileTypes).toEqual([".xyz"]);
+				expect(config.servers.fake?.resolvedCommand).toBe(path.join(root, "node_modules", ".bin", "fake-server"));
+			},
+		);
+	});
+
+	test("slash-bearing command resolves against the project root", () => {
+		withTmpProject(
+			{
+				"bin/server": "#!/bin/sh\n",
+				"lsp.json": JSON.stringify({
+					servers: {
+						custom: { command: "./bin/server", fileTypes: [".xyz"], rootMarkers: ["."] },
+					},
+				}),
+			},
+			root => {
+				const config = loadServerConfig(root);
+				expect(config.servers.custom?.resolvedCommand).toBe(path.join(root, "bin", "server"));
 			},
 		);
 	});
@@ -184,7 +220,7 @@ describe("loadServerConfig", () => {
 describe("getServersForFile", () => {
 	test("typescript file matches tsc, oxc, semgrep, snyk — primary first", () => {
 		withTmpProject({}, root => {
-			const config = loadServerConfig(root);
+			const config = loadMergedServerConfig(root);
 			const matches = getServersForFile(config, path.join(root, "a.ts"));
 			const names = matches.map(([name]) => name);
 			expect(names).toContain("typescript-7");
@@ -196,7 +232,7 @@ describe("getServersForFile", () => {
 
 	test("python file matches ty and ruff", () => {
 		withTmpProject({}, root => {
-			const config = loadServerConfig(root);
+			const config = loadMergedServerConfig(root);
 			const names = getServersForFile(config, path.join(root, "a.py")).map(([name]) => name);
 			expect(names).toContain("ty");
 			expect(names).toContain("ruff");
@@ -206,7 +242,7 @@ describe("getServersForFile", () => {
 
 	test("unknown extension matches nothing", () => {
 		withTmpProject({}, root => {
-			const config = loadServerConfig(root);
+			const config = loadMergedServerConfig(root);
 			expect(getServersForFile(config, path.join(root, "a.zzz"))).toEqual([]);
 		});
 	});
