@@ -6,7 +6,7 @@ import type { CapabilityId, InterceptionResult, ShellInterceptorRule } from "./t
  * Compile shell interceptor rules into regexes, skipping invalid patterns.
  */
 function compileRules(
-	rules: ShellInterceptorRule[],
+	rules: readonly ShellInterceptorRule[],
 ): Array<{ rule: ShellInterceptorRule; regex: RegExp }> {
 	const compiled: Array<{ rule: ShellInterceptorRule; regex: RegExp }> = [];
 	for (const rule of rules) {
@@ -29,8 +29,8 @@ function compileRules(
  */
 export function checkShellInterception(
 	command: string,
-	activeCapabilities: CapabilityId[] | string[],
-	rules: ShellInterceptorRule[] = DEFAULT_SHELL_INTERCEPTOR_RULES,
+	activeCapabilities: readonly (CapabilityId | string)[],
+	rules: readonly ShellInterceptorRule[] = DEFAULT_SHELL_INTERCEPTOR_RULES,
 ): InterceptionResult {
 	const normalizedCommand = command.trim();
 	const compiled = compileRules(rules);
@@ -57,8 +57,8 @@ export function checkShellInterception(
  */
 export function checkShellInterceptionWithCd(
 	rawCommand: string,
-	activeCapabilities: CapabilityId[] | string[],
-	rules: ShellInterceptorRule[] = DEFAULT_SHELL_INTERCEPTOR_RULES,
+	activeCapabilities: readonly (CapabilityId | string)[],
+	rules: readonly ShellInterceptorRule[] = DEFAULT_SHELL_INTERCEPTOR_RULES,
 ): InterceptionResult {
 	for (const commandToCheck of commandsToCheck(rawCommand)) {
 		const result = checkShellInterception(commandToCheck, activeCapabilities, rules);

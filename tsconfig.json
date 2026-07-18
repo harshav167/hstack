@@ -13,5 +13,6 @@
 			"@hstack/shared/*": ["./src/shared/*"]
 		}
 	},
-	"include": ["features/**/*", "src/**/*", "test/**/*"]
+	"include": ["features/**/*", "src/**/*", "test/**/*.ts"],
+	"exclude": ["test/fixtures"]
 }

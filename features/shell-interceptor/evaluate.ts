@@ -13,7 +13,7 @@ export function evaluateShellCommand(command: string, config: HstackConfig): Gat
 	}
 
 	// patterns: [] → allow all (omp empty-rules contract)
-	const rules: ShellInterceptorRule[] =
+	const rules: readonly ShellInterceptorRule[] =
 		si.patterns === null ? DEFAULT_SHELL_INTERCEPTOR_RULES : si.patterns;
 
 	if (rules.length === 0) {

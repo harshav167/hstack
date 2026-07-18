@@ -6,7 +6,10 @@ import {
 	DEFAULT_HSTACK_CONFIG,
 	DEFAULT_SHELL_INTERCEPTOR_CONFIG,
 	type HstackConfig,
+	type LspFeatureConfigKey,
+	type LspPolicyConfigKey,
 	type ShellInterceptorConfig,
+	type TtsrConfigStub,
 } from "./schema.ts";
 
 export function configPath(): string {
@@ -52,15 +55,42 @@ function parseShellInterceptor(raw: unknown): ShellInterceptorConfig {
 	return { enabled, activeCapabilities, patterns };
 }
 
+function parseLspPolicy(raw: unknown): LspPolicyConfigKey | undefined {
+	if (!isObject(raw)) return undefined;
+	const policy: {
+		minSeverity?: number;
+		maxPerFile?: number;
+		maxPerTurn?: number;
+		deniedSources?: string[];
+	} = {};
+	if (typeof raw.minSeverity === "number") policy.minSeverity = raw.minSeverity;
+	if (typeof raw.maxPerFile === "number") policy.maxPerFile = raw.maxPerFile;
+	if (typeof raw.maxPerTurn === "number") policy.maxPerTurn = raw.maxPerTurn;
+	if (Array.isArray(raw.deniedSources)) {
+		policy.deniedSources = raw.deniedSources.filter((s): s is string => typeof s === "string");
+	}
+	return Object.keys(policy).length > 0 ? (policy as LspPolicyConfigKey) : undefined;
+}
+
 function parseRoot(parsed: unknown): HstackConfig {
 	if (!isObject(parsed)) return { ...DEFAULT_HSTACK_CONFIG };
-	const config: HstackConfig = {
-		shellInterceptor: parseShellInterceptor(parsed.shellInterceptor),
-	};
-	if (isObject(parsed.ttsr)) {
-		config.ttsr = parsed.ttsr as HstackConfig["ttsr"];
+	const shellInterceptor = parseShellInterceptor(parsed.shellInterceptor);
+	const ttsr = isObject(parsed.ttsr) ? (parsed.ttsr as TtsrConfigStub) : undefined;
+	let lsp: LspFeatureConfigKey | undefined;
+	if (isObject(parsed.lsp)) {
+		const policy = parseLspPolicy(parsed.lsp.policy);
+		lsp = {
+			enabled: typeof parsed.lsp.enabled === "boolean" ? parsed.lsp.enabled : undefined,
+			inlineTimeoutMs: typeof parsed.lsp.inlineTimeoutMs === "number" ? parsed.lsp.inlineTimeoutMs : undefined,
+			idleTimeoutMs: typeof parsed.lsp.idleTimeoutMs === "number" ? parsed.lsp.idleTimeoutMs : undefined,
+			...(policy ? { policy } : {}),
+		};
 	}
-	return config;
+	return {
+		shellInterceptor,
+		...(ttsr ? { ttsr } : {}),
+		...(lsp ? { lsp } : {}),
+	};
 }
 
 /**

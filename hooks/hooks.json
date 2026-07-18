@@ -15,6 +15,31 @@
 				"failClosed": true,
 				"timeout": 5
 			}
+		],
+		"sessionStart": [
+			{
+				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/session-start-lsp.ts",
+				"timeout": 5
+			}
+		],
+		"postToolUse": [
+			{
+				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/post-tool-use-lsp.ts",
+				"matcher": "Write|StrReplace|Edit|ApplyPatch|MultiEdit|Read",
+				"timeout": 6
+			}
+		],
+		"stop": [
+			{
+				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/stop-lsp.ts",
+				"timeout": 5
+			}
+		],
+		"sessionEnd": [
+			{
+				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/session-end-lsp.ts",
+				"timeout": 5
+			}
 		]
 	}
 }

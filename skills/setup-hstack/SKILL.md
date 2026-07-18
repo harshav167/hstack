@@ -39,13 +39,19 @@ if `~/.hstack/config.json` is missing, offer to create defaults:
     "enabled": true,
     "activeCapabilities": ["read", "grep", "glob", "edit", "write", "hub"],
     "patterns": null
+  },
+  "lsp": {
+    "enabled": true,
+    "inlineTimeoutMs": 800,
+    "idleTimeoutMs": 1800000
   }
 }
 ```
 
-- `enabled: false` → opt-out (allow all; turns the hard gate off)
+- `shellInterceptor.enabled: false` → opt-out (allow all; turns the hard gate off)
 - `patterns: []` → allow all while keeping the feature installed
 - never put wire names (`Read`, `rg`) in `activeCapabilities` — use capability IDs only
+- `lsp.enabled` defaults **false** (it spawns language servers) — set true to opt in. shell interceptor defaults **true**.
 
 do not write the file unless they say yes (or already asked for defaults).
 

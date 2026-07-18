@@ -1,0 +1,113 @@
+{
+	"typescript-7": {
+		"command": "tsgo",
+		"args": ["--lsp", "--stdio"],
+		"fileTypes": [".ts", ".tsx", ".js", ".jsx", ".mts", ".cts", ".mjs", ".cjs"],
+		"rootMarkers": ["."],
+		"pullDiagnostics": true
+	},
+	"oxc": {
+		"command": "oxlint",
+		"args": ["--lsp"],
+		"fileTypes": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".mts", ".cts"],
+		"rootMarkers": ["."],
+		"isLinter": true
+	},
+	"gopls": {
+		"command": "gopls",
+		"args": ["serve"],
+		"fileTypes": [".go", ".mod", ".sum"],
+		"rootMarkers": ["."]
+	},
+	"golangci-lint": {
+		"command": "golangci-lint-langserver",
+		"args": [],
+		"fileTypes": [".go"],
+		"rootMarkers": ["."],
+		"isLinter": true,
+		"initOptions": {
+			"command": [
+				"golangci-lint",
+				"run",
+				"--output.json.path",
+				"stdout",
+				"--show-stats=false",
+				"--issues-exit-code=1"
+			]
+		}
+	},
+	"vscode-html-language-server": {
+		"command": "vscode-html-language-server",
+		"args": ["--stdio"],
+		"fileTypes": [".html", ".htm"],
+		"rootMarkers": ["."],
+		"initOptions": { "provideFormatter": false }
+	},
+	"vscode-css-language-server": {
+		"command": "vscode-css-language-server",
+		"args": ["--stdio"],
+		"fileTypes": [".css", ".scss", ".sass", ".less"],
+		"rootMarkers": ["."],
+		"initOptions": { "provideFormatter": false }
+	},
+	"vscode-json-language-server": {
+		"command": "vscode-json-language-server",
+		"args": ["--stdio"],
+		"fileTypes": [".json", ".jsonc"],
+		"rootMarkers": ["."],
+		"initOptions": { "provideFormatter": false }
+	},
+	"ty": {
+		"command": "ty",
+		"args": ["server"],
+		"fileTypes": [".py", ".pyi"],
+		"rootMarkers": ["."]
+	},
+	"ruff": {
+		"command": "ruff",
+		"args": ["server"],
+		"fileTypes": [".py", ".pyi"],
+		"rootMarkers": ["."],
+		"isLinter": true
+	},
+	"semgrep": {
+		"command": "semgrep",
+		"args": ["lsp"],
+		"fileTypes": [
+			".py", ".pyi", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".mts", ".cts",
+			".go", ".rs", ".java", ".rb", ".c", ".cpp", ".h", ".hpp"
+		],
+		"rootMarkers": ["."],
+		"isLinter": true,
+		"defer": true,
+		"initOptions": {
+			"scan": {
+				"configuration": [
+					"p/default", "p/gosec", "p/bandit", "p/python", "p/react", "p/javascript",
+					"p/r2c-security-audit", "p/owasp-top-ten", "p/cwe-top-25", "p/rust",
+					"p/nextjs", "p/golang", "p/typescript", "p/security-audit",
+					"p/ai-best-practices", "p/react-best-practices", "p/supply-chain"
+				],
+				"ci": false
+			}
+		}
+	},
+	"snyk": {
+		"command": "snyk",
+		"args": ["language-server"],
+		"fileTypes": [
+			".py", ".pyi", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".mts", ".cts",
+			".go", ".rs", ".java", ".rb", ".c", ".cpp", ".h", ".hpp",
+			".yaml", ".yml", ".json", ".toml", ".tf", ".tfvars", ".dockerfile", "Dockerfile"
+		],
+		"rootMarkers": ["."],
+		"isLinter": true,
+		"defer": true,
+		"initOptions": {
+			"activateSnykOpenSource": "true",
+			"activateSnykCode": "true",
+			"activateSnykIac": "true",
+			"enableTrustedFoldersFeature": "false"
+		}
+	}
+}

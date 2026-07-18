@@ -32,6 +32,11 @@ example next feature: **TTSR** (time-traveling stream rules from oh-my-pi) → `
 
 shared: `hook-io.ts`, `config/load.ts`. types stay inside the feature.
 
+## features shipping today
+
+- `features/shell-interceptor/` — gate (hard deny)
+- `features/lsp/` — injector (diagnostics-on-write). proves the daemon pattern: hooks are ephemeral, so long-lived state (LSP clients, stores, ledgers) lives in a single daemon per user behind a unix socket; hooks are thin clients. copy that shape for any feature needing persistent state (TTSR stream state, watchers, indexers).
+
 ## TTSR notes
 
 reuse omp `TtsrManager` matcher/tests. map to cursor event-boundary hooks. mid-stream abort is a platform gap — document partial parity. config: `{ "ttsr": { "enabled": false, ... } }`.

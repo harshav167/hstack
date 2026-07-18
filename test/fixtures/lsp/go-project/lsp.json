@@ -1,0 +1,6 @@
+{
+	"servers": {
+		"semgrep": { "disabled": true },
+		"snyk": { "disabled": true }
+	}
+}
