@@ -1,6 +1,6 @@
 {
 	"name": "hstack",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"private": true,
 	"type": "module",
 	"description": "Cursor plugin stack (shell interceptor + more)",

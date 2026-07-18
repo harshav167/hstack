@@ -5,7 +5,7 @@
 	},
 	"metadata": {
 		"description": "cursor plugin stack — shell interceptor today, more features later",
-		"version": "0.3.0"
+		"version": "0.3.1"
 	},
 	"plugins": [
 		{
