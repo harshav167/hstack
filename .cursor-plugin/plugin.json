@@ -1,7 +1,7 @@
 {
 	"name": "hstack",
 	"displayName": "hstack",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "a cursor plugin you grow. first feature: shell interceptor. room for TTSR and more.",
 	"author": {
 		"name": "harsha"
