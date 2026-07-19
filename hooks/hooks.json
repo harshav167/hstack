@@ -3,7 +3,7 @@
 	"hooks": {
 		"preToolUse": [
 			{
-				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/pre-tool-use-shell.ts",
+				"command": "bun ./src/hooks/pre-tool-use-shell.ts",
 				"matcher": "Shell",
 				"failClosed": true,
 				"timeout": 5
@@ -11,33 +11,33 @@
 		],
 		"beforeShellExecution": [
 			{
-				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/before-shell-execution.ts",
+				"command": "bun ./src/hooks/before-shell-execution.ts",
 				"failClosed": true,
 				"timeout": 5
 			}
 		],
 		"sessionStart": [
 			{
-				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/session-start-lsp.ts",
+				"command": "bun ./src/hooks/session-start-lsp.ts",
 				"timeout": 5
 			}
 		],
 		"postToolUse": [
 			{
-				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/post-tool-use-lsp.ts",
+				"command": "bun ./src/hooks/post-tool-use-lsp.ts",
 				"matcher": "Write|StrReplace|Edit|ApplyPatch|MultiEdit|Read",
 				"timeout": 6
 			}
 		],
 		"stop": [
 			{
-				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/stop-lsp.ts",
+				"command": "bun ./src/hooks/stop-lsp.ts",
 				"timeout": 5
 			}
 		],
 		"sessionEnd": [
 			{
-				"command": "bun ${CURSOR_PLUGIN_ROOT}/src/hooks/session-end-lsp.ts",
+				"command": "bun ./src/hooks/session-end-lsp.ts",
 				"timeout": 5
 			}
 		]
