@@ -1,0 +1,30 @@
+{
+  "name": "codex-security",
+  "version": "0.1.11",
+  "description": "OpenAI Codex Security workflows ported to OMP (scans, diff review, triage, threat modeling).",
+  "type": "module",
+  "license": "Proprietary",
+  "keywords": [
+    "security",
+    "code-review",
+    "diff-review",
+    "appsec",
+    "threat-modeling",
+    "codex",
+    "omp",
+    "omp-package"
+  ],
+  "omp": {
+    "skills": [
+      "./skills"
+    ]
+  },
+  "author": {
+    "name": "OpenAI"
+  },
+  "homepage": "https://developers.openai.com/codex/security",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openai/plugins"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "cursed-plugins",
+  "version": "1.0.0",
+  "description": "Modern codebases face unprecedented challenges: technical debt accumulation, architectural drift, developer attrition, and the slow, creeping realization that nobody remembers why utils.js has 4,000 lines.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "omp-package"
+  ],
+  "omp": {
+    "skills": [
+      "./skills"
+    ]
+  },
+  "author": {
+    "name": "Factory",
+    "email": "hello@factory.ai"
+  }
+}

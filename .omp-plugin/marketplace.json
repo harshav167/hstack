@@ -1,0 +1,92 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "hstack",
+  "owner": {
+    "name": "harsha"
+  },
+  "metadata": {
+    "description": "OMP marketplace of normalized plugins. Root-repo hstack remains the Cursor-only core plugin and is not listed here.",
+    "version": "0.4.0",
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "pstack",
+      "description": "OMP-native pstack: deep agent workflows, poteto-mode, arena/swarm/interrogate. Setup writes ~/.omp/agent/pstack.yaml.",
+      "version": "0.14.0",
+      "source": "./pstack",
+      "category": "development",
+      "homepage": "https://github.com/cursor/plugins/tree/main/pstack",
+      "repository": "https://github.com/cursor/plugins",
+      "license": "MIT",
+      "keywords": [
+        "pstack",
+        "workflow",
+        "agents",
+        "omp"
+      ],
+      "author": {
+        "name": "Lauren Tan"
+      }
+    },
+    {
+      "name": "thermos",
+      "description": "Thermo-nuclear branch review for OMP: deep correctness/security audits plus harsh code-quality rubrics.",
+      "version": "1.0.0",
+      "source": "./thermos",
+      "category": "development",
+      "homepage": "https://github.com/cursor/plugins/tree/main/thermos",
+      "repository": "https://github.com/cursor/plugins",
+      "license": "MIT",
+      "keywords": [
+        "thermos",
+        "code-review",
+        "security",
+        "omp"
+      ],
+      "author": {
+        "name": "Cursor",
+        "email": "plugins@cursor.com"
+      }
+    },
+    {
+      "name": "cursed-plugins",
+      "description": "Factory cursed skills (roast, blame, therapy, obituary, …) as an OMP package.",
+      "version": "1.0.0",
+      "source": "./cursed-plugins",
+      "category": "productivity",
+      "homepage": "https://github.com/factory-ai/cursed-plugins",
+      "repository": "https://github.com/factory-ai/cursed-plugins",
+      "license": "MIT",
+      "keywords": [
+        "cursed",
+        "roast",
+        "fun",
+        "omp"
+      ],
+      "author": {
+        "name": "Factory",
+        "email": "hello@factory.ai"
+      }
+    },
+    {
+      "name": "codex-security",
+      "description": "OpenAI Codex Security workflows ported to OMP (scans, diff review, triage, threat modeling).",
+      "version": "0.1.11",
+      "source": "./codex-security",
+      "category": "security",
+      "homepage": "https://developers.openai.com/codex/security",
+      "repository": "https://github.com/openai/plugins",
+      "license": "Proprietary",
+      "keywords": [
+        "security",
+        "codex",
+        "appsec",
+        "omp"
+      ],
+      "author": {
+        "name": "OpenAI"
+      }
+    }
+  ]
+}
