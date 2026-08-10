@@ -392,25 +392,34 @@ function ensureSetupCommand(dest) {
 
 function rewritePstackSkillBodiesForOmp(root) {
   const skillFiles = [];
-  const skillsRoot = join(root, "skills");
-  if (!existsSync(skillsRoot)) return 0;
-  for (const dir of listSkillDirs(skillsRoot)) {
-    skillFiles.push(join(skillsRoot, dir, "SKILL.md"));
-    for (const sub of ["references", "playbooks"]) {
-      const d = join(skillsRoot, dir, sub);
-      if (!existsSync(d)) continue;
-      for (const f of readdirSync(d)) {
-        if (f.endsWith(".md")) skillFiles.push(join(d, f));
+  const collectMd = (base) => {
+    if (!existsSync(base)) return;
+    if (statSync(base).isFile()) {
+      if (base.endsWith(".md")) skillFiles.push(base);
+      return;
+    }
+    const stack = [base];
+    while (stack.length) {
+      const dir = stack.pop();
+      for (const ent of readdirSync(dir, { withFileTypes: true })) {
+        if (ent.name.startsWith(".")) continue;
+        const full = join(dir, ent.name);
+        if (ent.isDirectory()) stack.push(full);
+        else if (ent.isFile() && ent.name.endsWith(".md")) skillFiles.push(full);
       }
     }
-  }
-  const potetoPlay = join(skillsRoot, "poteto-mode", "playbooks");
-  if (existsSync(potetoPlay)) {
-    for (const f of readdirSync(potetoPlay)) {
-      if (f.endsWith(".md")) skillFiles.push(join(potetoPlay, f));
-    }
-  }
+  };
+
+  collectMd(join(root, "skills"));
+  collectMd(join(root, "agents"));
+  collectMd(join(root, "commands"));
+  collectMd(join(root, "docs"));
+  collectMd(join(root, "README.md"));
+
   const replacements = [
+    ["- `subagent_type`: `generalPurpose`", '- `agent`: `"task"`'],
+    ["- `subagent_type`: `poteto-agent`", '- `agent`: `"poteto-agent"`'],
+    ["- `subagent_type`: `Comment Sicko`", '- `agent`: `"comment-sicko"`'],
     ["subagent_type: `generalPurpose`", 'agent: "task"'],
     ["subagent_type: generalPurpose", 'agent: "task"'],
     ['subagent_type: "generalPurpose"', 'agent: "task"'],
@@ -418,6 +427,10 @@ function rewritePstackSkillBodiesForOmp(root) {
     ['`subagent_type: "generalPurpose"`', '`agent: "task"`'],
     ['subagent_type: "poteto-agent"', 'agent: "poteto-agent"'],
     ['`subagent_type: "poteto-agent"`', '`agent: "poteto-agent"`'],
+    ['subagent_type: "Comment Sicko"', 'agent: "comment-sicko"'],
+    ['`subagent_type: "Comment Sicko"`', '`agent: "comment-sicko"`'],
+    ['`generalPurpose` is the fallback', '`"task"` is the fallback'],
+    ['`generalPurpose`', '`"task"`'],
     ["AskQuestion tool", "OMP `ask` tool"],
     ["`AskQuestion`", "OMP `ask`"],
     ["AskQuestion", "OMP ask"],
@@ -426,7 +439,12 @@ function rewritePstackSkillBodiesForOmp(root) {
     ["Cursor's built-in babysit skill", "the pstack Babysit playbook"],
     ["Cursor cloud agent", "OMP Task agent"],
     ["Cursor cloud agents", "OMP Task agents"],
+    [".cursor/skills/", ".omp/skills/"],
+    ["~/.cursor/skills/", "~/.omp/skills/"],
+    ["~/.cursor/plugins/", "~/.omp/plugins/"],
+    ["~/.cursor/projects/", "~/.omp/"],
   ];
+
   let n = 0;
   for (const file of skillFiles) {
     if (!existsSync(file)) continue;

@@ -43,7 +43,7 @@ Launch all reviewers in a single message using the Task tool. Use the `interroga
 | Reviewer D | `claude-opus-5-thinking-xhigh` |
 
 For each reviewer:
-- `subagent_type`: `generalPurpose`
+- `agent`: `"task"`
 - `model`: the configured `interrogate reviewers` entry, or the table default with no configured line
 - `readonly`: `true`
 
