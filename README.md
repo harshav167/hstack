@@ -17,25 +17,38 @@ or **Dashboard → Plugins → Add Marketplace → Import from Repo** → `https
 
 Layout: `.cursor-plugin/marketplace.json` + `.cursor-plugin/plugin.json` (source `.`).
 
-## OMP marketplace install
+## OMP install (important)
+
+OMP still discovers **marketplace** plugin skills via the `claude-plugins` provider.
+If you disable `claude-plugins` (to avoid importing `~/.claude` junk), marketplace
+skills will not load even when `omp plugin list` shows them installed.
+
+**Working path today:** build packages into `plugins/`, then **native-link** them
+so they load through `omp-plugins` (OMP Extension Packages), with Claude providers off.
 
 ```bash
-# once
-omp plugin marketplace add /Users/harsha/Developer/hstack
-# or after push:
-# omp plugin marketplace add harshav167/hstack
+# rebuild OMP packages from upstream sources
+bun scripts/build-omp-marketplace.mjs --clean
 
-omp plugin discover hstack
-omp plugin install pstack@hstack
-omp plugin install thermos@hstack
-omp plugin install cursed-plugins@hstack
-omp plugin install codex-security@hstack
+# native link (skills load with claude-plugins disabled)
+omp plugin install -l ./plugins/pstack
+omp plugin install -l ./plugins/thermos
+omp plugin install -l ./plugins/cursed-plugins
+omp plugin install -l ./plugins/codex-security
 
-# project-only
-omp plugin install --scope project pstack@hstack
+# reload / new session
 ```
 
-Then `/reload-plugins` (or restart) so skills/agents/commands refresh.
+Marketplace catalog still exists for discovery/publish:
+
+```bash
+omp plugin marketplace add harshav167/hstack   # or local path
+omp plugin discover hstack
+# install name@hstack only works for skills if claude-plugins is enabled
+```
+
+Keep `disabledProviders: [claude, claude-plugins, ...]` if you do not want Claude
+registry imports. Prefer `-l` links until OMP splits marketplace discovery from Claude.
 
 ### Catalog (OMP)
 
