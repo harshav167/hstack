@@ -79,7 +79,7 @@ Sources are read from sibling checkouts (not mutated):
 - `../plugins/cursed-plugins`
 - `/tmp/openai-plugins-src/plugins/codex-security` (cloned on demand)
 
-Converter: `../plugins/scripts/cursor-plugin-to-omp.mjs`
+Converter: `scripts/cursor-plugin-to-omp.mjs`
 
 ```bash
 bun scripts/build-omp-marketplace.mjs --clean

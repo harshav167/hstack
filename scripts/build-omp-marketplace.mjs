@@ -25,10 +25,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
 const PLUGINS_DIR = join(REPO_ROOT, "plugins");
 const CATALOG_PATH = join(REPO_ROOT, ".omp-plugin", "marketplace.json");
-const CONVERTER = resolve(
- REPO_ROOT,
- "../plugins/scripts/cursor-plugin-to-omp.mjs",
-);
+const CONVERTER = join(REPO_ROOT, "scripts", "cursor-plugin-to-omp.mjs");
 
 const flags = new Set(process.argv.slice(2).filter((a) => a.startsWith("--")));
 
