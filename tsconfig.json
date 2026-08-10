@@ -7,9 +7,6 @@
     "noEmit": true,
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
-    "types": [
-      "bun-types"
-    ],
     "paths": {
       "@hstack/features/*": [
         "./features/*"
